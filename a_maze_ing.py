@@ -8,8 +8,7 @@ from mazegen import Coord, MazeGenerator
 
 @dataclass
 class MazeConfig:
-    """Modello dati per la configurazione del labirinto."""
-
+    """Data model for maze configuration."""
     width: int
     height: int
     entry: Coord
@@ -21,21 +20,17 @@ class MazeConfig:
 
 
 class ConfigParser:
-    """Gestisce la lettura e la validazione del file config.txt."""
+    """Handles reading and validating the config.txt file."""
 
     REQUIRED_KEYS = {
-        "WIDTH",
-        "HEIGHT",
-        "ENTRY",
-        "EXIT",
-        "OUTPUT_FILE",
-        "PERFECT",
+        "WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"
     }
 
     def __init__(self, path: str) -> None:
         self.path = path
 
     def parse(self) -> MazeConfig:
+        """Parse the configuration file and return a valid MazeConfig."""
         raw = self._read_file()
         self._validate_keys(raw)
 
@@ -63,9 +58,7 @@ class ConfigParser:
                 if not text or text.startswith("#"):
                     continue
                 if "=" not in text:
-                    raise ValueError(
-                        f"Invalid syntax on line {line_num}: missing '='"
-                    )
+                    raise ValueError(f"Invalid syntax on line {line_num}")
                 key, value = text.split("=", 1)
                 raw[key.strip().upper()] = value.strip()
         return raw
@@ -73,9 +66,7 @@ class ConfigParser:
     def _validate_keys(self, raw: dict[str, str]) -> None:
         missing = self.REQUIRED_KEYS - raw.keys()
         if missing:
-            raise ValueError(
-                f"Missing required config keys: {', '.join(sorted(missing))}"
-            )
+            raise ValueError(f"Missing keys: {', '.join(sorted(missing))}")
 
     def _parse_bool(self, value: str) -> bool:
         lower = value.strip().lower()
@@ -97,15 +88,15 @@ class ConfigParser:
 
 
 class MazeCLI:
-    """Interfaccia a riga di comando per l'esplorazione del labirinto."""
+    """Command-line interface for maze exploration."""
 
     WALL_COLORS = [
         "",
-        "\033[31m",
-        "\033[32m",
-        "\033[34m",
-        "\033[36m",
-        "\033[33m",
+        "\033[31m",  # Red
+        "\033[32m",  # Green
+        "\033[34m",  # Blue
+        "\033[36m",  # Cyan
+        "\033[33m",  # Yellow
     ]
 
     def __init__(self, generator: MazeGenerator) -> None:
@@ -114,17 +105,11 @@ class MazeCLI:
         self.color_idx = 0
 
     def run(self) -> None:
+        """Start the interactive loop."""
         while True:
-            print(
-                "\n"
-                + self.generator.render_ascii(
-                    show_solution=self.show_solution,
-                    wall_color=self.WALL_COLORS[self.color_idx],
-                )
-            )
-            print(
-                "\nCommands: [r]egenerate, [s]how/hide path, [c]olor, [q]uit"
-            )
+            color = self.WALL_COLORS[self.color_idx]
+            print(f"\n{self.generator.render_ascii(self.show_solution, color)}")
+            print("\nCommands: [r]egenerate, [s]how/hide path, [c]olor, [q]uit")
             try:
                 cmd = input("> ").strip().lower()
                 if cmd in {"q", "quit", "exit"}:
@@ -174,14 +159,8 @@ def main(argv: list[str]) -> int:
 
         MazeCLI(generator).run()
         return 0
-    except FileNotFoundError:
-        print(f"Error: configuration file not found: {argv[1]}")
-    except ValueError as exc:
-        print(f"Error: {exc}")
-    except OSError as exc:
-        print(f"Error: file operation failed: {exc}")
     except Exception as exc:
-        print(f"Unexpected error: {exc}")
+        print(f"Error: {exc}")
     return 1
 
 

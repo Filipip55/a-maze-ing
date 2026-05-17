@@ -17,7 +17,7 @@ OUTPUT_FILE=maze.txt
 PERFECT=True
 
 # Used to reproduce maze generation
-SEED=67
+SEED=5
 
 # Flag for including the 42 block in the maze
 INCLUDE_42=True

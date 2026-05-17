@@ -65,7 +65,7 @@ class MazeGenerator:
     def render_ascii(
         self, show_solution: bool = False, wall_color: str = ""
     ) -> str:
-        """Render the maze using high-res box-drawing characters."""
+        """Render the maze using standard ASCII characters."""
         if not self.data:
             raise RuntimeError("Generate the maze before rendering.")
         path_coords = (
