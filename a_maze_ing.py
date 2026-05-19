@@ -108,8 +108,10 @@ class MazeCLI:
         """Start the interactive loop."""
         while True:
             color = self.WALL_COLORS[self.color_idx]
-            print(f"\n{self.generator.render_ascii(self.show_solution, color)}")
-            print("\nCommands: [r]egenerate, [s]how/hide path, [c]olor, [q]uit")
+            print(f"\n"
+                  f"{self.generator.render_ascii(self.show_solution, color)}")
+            print("\nCommands: "
+                  "[r]regenerate, [s]show/hide path, [c]color, [q]quit")
             try:
                 cmd = input("> ").strip().lower()
                 if cmd in {"q", "quit", "exit"}:
