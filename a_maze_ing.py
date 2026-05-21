@@ -114,7 +114,14 @@ class MazeCLI:
                   "[r]regenerate, [s]show/hide path, [c]color, [q]quit")
             try:
                 cmd = input("> ").strip().lower()
-                if cmd in {"q", "quit", "exit"}:
+                # Easter eggs marameo
+                if cmd in {"elimon", "eli", "edingwiz"}:
+                    print("Ping Pong? 🏓")
+                    break
+                elif cmd in {"filip", "ioan", "fil", "icoman"}:
+                    print("Che ci fai a scuola?")
+                    break
+                elif cmd in {"q", "quit", "exit"}:
                     break
                 self._handle_command(cmd)
             except (EOFError, KeyboardInterrupt):
