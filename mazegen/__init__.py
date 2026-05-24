@@ -1,4 +1,4 @@
-"""Facade for the Maze Generation package."""
+"""Interface for the Maze Generation package and its classes."""
 
 from .exporter import MazeExporter
 from .generator import CoreGenerator
@@ -65,7 +65,7 @@ class MazeGenerator:
     def render_ascii(
         self, show_solution: bool = False, wall_color: str = ""
     ) -> str:
-        """Render the maze using standard ASCII characters."""
+        """Render the maze on the CLI."""
         if not self.data:
             raise RuntimeError("Generate the maze before rendering.")
         path_coords = (
