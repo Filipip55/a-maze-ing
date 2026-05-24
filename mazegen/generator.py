@@ -1,4 +1,4 @@
-"""Core generation logic using recursive backtracker."""
+"""Core generation logic using a recursive backtracker algorithm."""
 
 import random
 from collections import deque
@@ -80,11 +80,11 @@ class CoreGenerator:
 
     def _inject_42_pattern(self) -> None:
         pattern = [
-            "#.#.####",
-            "#.#....#",
-            "###.####",
-            "..#.#...",
-            "..#.####",
+            "#.#.###",
+            "#.#...#",
+            "###.###",
+            "..#.#..",
+            "..#.###",
         ]
         p_height = len(pattern)
         p_width = len(pattern[0])
