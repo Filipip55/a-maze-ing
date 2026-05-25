@@ -4,7 +4,8 @@ from .models import EAST, NORTH, SOUTH, WEST, Coord, MazeData
 
 
 class MazeRenderer:
-    """Gestisce la visualizzazione del labirinto tramite comandi della cli (colori e reverse video)."""
+    """Gestisce la visualizzazione del labirinto tramite
+    comandi della cli (colori e reverse video)."""
 
     def __init__(self, data: MazeData) -> None:
         self.data = data
@@ -15,12 +16,13 @@ class MazeRenderer:
         ]
 
     def render(
-        self,
-        path: list[Coord],
-        show_solution: bool = False,
-        color: str = "",
+            self,
+            path: list[Coord],
+            show_solution: bool = False,
+            color: str = "",
     ) -> str:
-        """Stampa a video il labirinto rappresentato da una sola stringa ANSI."""
+        """Stampa a video il labirinto rappresentato
+        da una sola stringa."""
         self._carve_paths()
         self._draw_cells()
         if show_solution and path:

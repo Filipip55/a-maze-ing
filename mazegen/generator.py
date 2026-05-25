@@ -10,14 +10,14 @@ class CoreGenerator:
     """Genera la struttura del labirinto"""
 
     def __init__(
-        self,
-        width: int,
-        height: int,
-        entry: Coord,
-        exit_: Coord,
-        seed: int | None,
-        perfect: bool,
-        include_42: bool,
+            self,
+            width: int,
+            height: int,
+            entry: Coord,
+            exit_: Coord,
+            seed: int | None,
+            perfect: bool,
+            include_42: bool,
     ) -> None:
         self.data = MazeData(
             width=width, height=height, entry=entry, exit=exit_
@@ -28,7 +28,8 @@ class CoreGenerator:
         self.warnings: list[str] = []
 
     def generate(self) -> MazeData:
-        """Genera la matrice del labirinto e crea dei corridoi al suo interno."""
+        """Genera la matrice del labirinto e crea dei corridoi
+        al suo interno."""
         self.data.grid = [
             [ALL_WALLS for _ in range(self.data.width)]
             for _ in range(self.data.height)
@@ -123,7 +124,8 @@ class CoreGenerator:
         if not open_cells:
             return False
 
-        start = self.data.entry if self.data.entry not in blocked else open_cells[0]
+        start = self.data.entry if (self.data.entry not in
+                                    blocked) else open_cells[0]
         seen: set[Coord] = {start}
         q: deque[Coord] = deque([start])
         while q:
@@ -131,14 +133,15 @@ class CoreGenerator:
             for dx, dy, *_ in DIRS:
                 nx, ny = current.x + dx, current.y + dy
                 nxt = Coord(nx, ny)
-                if not self.data.inside(nx, ny) or nxt in blocked or nxt in seen:
+                if (not self.data.inside(nx, ny) or
+                        nxt in blocked or nxt in seen):
                     continue
                 seen.add(nxt)
                 q.append(nxt)
         return len(seen) == len(open_cells)
 
     def _unvisited_neighbors(
-        self, current: Coord, visited: set[Coord]
+            self, current: Coord, visited: set[Coord]
     ) -> list[tuple[int, int, int, int]]:
         candidates = []
         for dx, dy, from_bit, to_bit, _ in DIRS:
@@ -163,7 +166,8 @@ class CoreGenerator:
             for dx, dy, from_bit, to_bit, _ in DIRS:
                 nx, ny = x + dx, y + dy
                 nxt = Coord(nx, ny)
-                if not self.data.inside(nx, ny) or nxt in self.data.closed_cells:
+                if (not self.data.inside(nx, ny) or
+                        nxt in self.data.closed_cells):
                     continue
                 if self.data.grid[y][x] & from_bit:
                     options.append((nx, ny, from_bit, to_bit))

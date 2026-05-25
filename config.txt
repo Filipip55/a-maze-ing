@@ -14,7 +14,7 @@ EXIT=19,11
 OUTPUT_FILE=maze.txt
 
 # Flag for generating a perfect maze (can be True of False)
-PERFECT=True
+perfect=False
 
 # Used to reproduce maze generation
 SEED=5

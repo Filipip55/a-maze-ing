@@ -12,7 +12,8 @@ class MazeSolver:
         self.data = data
 
     def solve(self) -> list[str]:
-        """Ritorna il percorso più breve tra entrata e uscita tramite passi N/E/S/W."""
+        """Ritorna il percorso più breve tra entrata
+        e uscita tramite passi N/E/S/W."""
         if self.data.entry == self.data.exit:
             return []
 

@@ -20,7 +20,8 @@ class MazeConfig:
 
 
 class ConfigParser:
-    """Gestisce la lettura, la validazione e l'estrazione dei dati del file di configurazione."""
+    """Gestisce la lettura, la validazione e l'estrazione dei dati
+    del file di configurazione."""
 
     REQUIRED_KEYS = {
         "WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"
@@ -30,7 +31,8 @@ class ConfigParser:
         self.path = path
 
     def parse(self) -> MazeConfig:
-        """Interpreta i dati del file di configurazione e ritorna un oggetto mazeconfig."""
+        """Interpreta i dati del file di configurazione e
+        ritorna un oggetto mazeconfig."""
         raw = self._read_file()
         self._validate_keys(raw)
 
