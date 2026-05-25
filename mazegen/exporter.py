@@ -1,16 +1,16 @@
-"""Handles formatting and exporting the maze to a file."""
+"""Gestisce la formattazione e l'esportazione dei dati del labirinto su un file."""
 
 from .models import MazeData
 
 
 class MazeExporter:
-    """Exports maze data to the required hexadecimal format."""
+    """Esporta mazedata su un file."""
 
     def __init__(self, data: MazeData) -> None:
         self.data = data
 
     def to_hex_rows(self) -> list[str]:
-        """Convert the maze grid to a list of hex strings."""
+        """Converte le righe del labirinto in stringhe di numeri esadecimali."""
         rows: list[str] = []
         for y in range(self.data.height):
             chars = [
@@ -21,7 +21,7 @@ class MazeExporter:
         return rows
 
     def dump_to_file(self, file_path: str, path_steps: list[str]) -> None:
-        """Write the generated maze and solution to a file."""
+        """Scrive su un file il labirinto generato e il percorso più breve verso l'uscita."""
         steps_str = "".join(path_steps)
         with open(file_path, "w", encoding="utf-8") as out:
             for row in self.to_hex_rows():

@@ -1,4 +1,4 @@
-"""Data structures and constants for the maze generator."""
+"""Strutture dati e costanti necessarie per il funzionamento di mazegen."""
 
 from dataclasses import dataclass, field
 from typing import Final
@@ -20,7 +20,7 @@ DIRS: Final[list[tuple[int, int, int, int, str]]] = [
 
 @dataclass(frozen=True)
 class Coord:
-    """Cell coordinates inside the maze grid."""
+    """Coordinate delle celle all'interno della matrice del labirinto."""
 
     x: int
     y: int
@@ -28,7 +28,7 @@ class Coord:
 
 @dataclass
 class MazeData:
-    """Shared state of the generated maze."""
+    """Stato del labirinto, è condiviso tra le varie classi."""
 
     width: int
     height: int
@@ -38,5 +38,5 @@ class MazeData:
     closed_cells: set[Coord] = field(default_factory=set)
 
     def inside(self, x: int, y: int) -> bool:
-        """Check if coordinates are within bounds."""
+        """Check per assicurarsi che le coordinate non siano out of bounds."""
         return 0 <= x < self.width and 0 <= y < self.height

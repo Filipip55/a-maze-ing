@@ -1,4 +1,4 @@
-"""Pathfinding logic for the maze."""
+"""Logica pathfinding del labirinto."""
 
 from collections import deque
 
@@ -6,13 +6,13 @@ from .models import DIRS, Coord, MazeData
 
 
 class MazeSolver:
-    """Finds the shortest path in a generated maze."""
+    """Trova il percorso più breve tra entrata e uscita di un labirinto."""
 
     def __init__(self, data: MazeData) -> None:
         self.data = data
 
     def solve(self) -> list[str]:
-        """Return shortest path from entry to exit with N/E/S/W steps."""
+        """Ritorna il percorso più breve tra entrata e uscita tramite passi N/E/S/W."""
         if self.data.entry == self.data.exit:
             return []
 
@@ -45,7 +45,7 @@ class MazeSolver:
         return path
 
     def get_path_coords(self) -> list[Coord]:
-        """Return shortest path as a list of Coord objects."""
+        """Ritorna il percorso più breve come una lista di Coord."""
         if self.data.entry == self.data.exit:
             return []
 

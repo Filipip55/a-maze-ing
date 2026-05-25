@@ -1,4 +1,4 @@
-"""Core generation logic using a recursive backtracker algorithm."""
+"""Logica di generazione del labirinto tramite algoritmo di backtracking."""
 
 import random
 from collections import deque
@@ -7,7 +7,7 @@ from .models import ALL_WALLS, DIRS, EXTRA_OPENINGS_DIVISOR, Coord, MazeData
 
 
 class CoreGenerator:
-    """Handles the structural generation of the maze."""
+    """Genera la struttura del labirinto"""
 
     def __init__(
         self,
@@ -28,7 +28,7 @@ class CoreGenerator:
         self.warnings: list[str] = []
 
     def generate(self) -> MazeData:
-        """Build the maze grid and return the state data."""
+        """Genera la matrice del labirinto e crea dei corridoi al suo interno."""
         self.data.grid = [
             [ALL_WALLS for _ in range(self.data.width)]
             for _ in range(self.data.height)

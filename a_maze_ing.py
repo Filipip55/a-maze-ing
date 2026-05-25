@@ -1,4 +1,4 @@
-"""Main script for the A-Maze-ing mandatory project."""
+"""Script principale del progetto."""
 
 import sys
 from dataclasses import dataclass
@@ -8,7 +8,7 @@ from mazegen import Coord, MazeGenerator
 
 @dataclass
 class MazeConfig:
-    """Data model for maze configuration."""
+    """Dati estratti dal file di configurazione."""
     width: int
     height: int
     entry: Coord
@@ -20,7 +20,7 @@ class MazeConfig:
 
 
 class ConfigParser:
-    """Handles reading and validating the config.txt file."""
+    """Gestisce la lettura, la validazione e l'estrazione dei dati del file di configurazione."""
 
     REQUIRED_KEYS = {
         "WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"
@@ -30,7 +30,7 @@ class ConfigParser:
         self.path = path
 
     def parse(self) -> MazeConfig:
-        """Parse the configuration file and return a valid MazeConfig."""
+        """Interpreta i dati del file di configurazione e ritorna un oggetto mazeconfig."""
         raw = self._read_file()
         self._validate_keys(raw)
 
@@ -88,7 +88,7 @@ class ConfigParser:
 
 
 class MazeCLI:
-    """Command-line interface for maze exploration."""
+    """Interfaccia CLI per comandi sul labirinto."""
 
     WALL_COLORS = [
         "",
@@ -105,7 +105,7 @@ class MazeCLI:
         self.color_idx = 0
 
     def run(self) -> None:
-        """Start the interactive loop."""
+        """Avvio del loop principale."""
         while True:
             color = self.WALL_COLORS[self.color_idx]
             print(f"\n"
@@ -143,7 +143,7 @@ class MazeCLI:
 
 
 def main(argv: list[str]) -> int:
-    """Program entry point."""
+    """Punto di avvio del programma."""
     if len(argv) != 2:
         print("Usage: python3 a_maze_ing.py config.txt")
         return 1

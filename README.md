@@ -66,11 +66,11 @@ INCLUDE_42=True
 
 ## Maze generation algorithm
 The generator uses a depth-first recursive-backtracker strategy implemented iteratively with a stack.
-This produces a spanning-tree structure over non-closed cells (perfect maze mode).
+This produces a spanning-tree structure over non-closed cells.
 
 ## Why this algorithm
-- Simple to understand and implement for beginners.
-- Naturally produces connected mazes.
+- Simple to understand and implement.
+- Naturally produces connected mazes with 1 cell wide corridors.
 - Works well with deterministic seeds for reproducibility.
 
 ## Reusable module
