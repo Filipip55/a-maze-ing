@@ -2,8 +2,7 @@
 
 ## Description
 A-Maze-ing is a Python maze generator project.
-It reads a configuration file, generates a valid maze, exports a hexadecimal file format, and displays an interactive ASCII view.
-The implementation focuses on clarity, robust error handling, and reusable architecture.
+It reads a configuration file, generates a valid maze, exports a hexadecimal file format, and displays an interactive view on the CLI.
 
 ## Instructions
 ### Requirements
@@ -96,11 +95,12 @@ You can pass custom `seed`, `perfect`, and `include_42` values.
 - Shortest valid solution: `shortest_path()`
 
 ## Visual representation
-Terminal ASCII rendering is provided from the main script.
+Terminal rendering is provided from the main script.
 Interactive commands:
 - regenerate maze
-- show/hide shortest path
+- show/hide the shortest path to exit
 - rotate wall colors
+- easter eggs! try our 42intra names
 
 ## Team and project management
 ### Roles
@@ -111,34 +111,38 @@ Interactive commands:
 Planned phases:
 1. parser and infrastructure
 2. generation and pathfinding
-3. output/export and rendering
-4. refactor and validation
+3. rendering
+4. output/export
+5. refactor and validation
 
 The same structure was maintained with small iterative improvements.
 
 ### What worked well
 - Keeping generation logic inside a reusable class.
-- Strong validation at parser and generator boundaries.
+- Strong validation in parser logic.
 
 ### What could be improved
-- More automatic test coverage for edge-case configurations.
 - Additional rendering modes.
+- Adding animations to generation and solving
+- Adding multiple algorithms for maze generation and solving
 
 ### Tools used
-- Python standard library (`random`, `collections`, `dataclasses`, `typing`)
+- Python standard library (`random`, `dataclasses`, `typing`)
 - `flake8` for style
 - `mypy` for static typing
 - `build` for wheel/sdist packaging
 
 ## Resources
 - Python documentation: https://docs.python.org/3/
-- PEP 257 docstrings: https://peps.python.org/pep-0257/
-- mypy documentation: https://mypy.readthedocs.io/
-- Recursive backtracker overview: https://en.wikipedia.org/wiki/Maze_generation_algorithm
+- Programming mazes: https://youtu.be/Y37-gB83HKE?si=tYfv1VZDX3Q1X-po
+- Understanding recursion: https://youtu.be/ngCos392W4w?si=EHxHg2OXIL6FiB5m
+- bfs search on a grid: https://youtu.be/KiCBXu4P-2Y?si=1H7XEu0rboJoo8x1
 
 ### AI usage
 AI was used to:
 - structure implementation steps,
 - validate interpretation of requirements,
+- understanding bitwise logic of the maze grid
+- first iteration of the MazeRender class to visually understand what we were working on while writing generation logic 
 - review naming/docstring consistency.
 All generated proposals were manually checked and adapted.
