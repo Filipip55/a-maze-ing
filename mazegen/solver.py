@@ -9,10 +9,11 @@ class MazeSolver:
     """Trova il percorso più breve tra entrata e uscita di un labirinto."""
 
     def __init__(self, data: MazeData) -> None:
+        """Salva i dati del labirinto da risolvere."""
         self.data = data
 
     def solve(self) -> list[str]:
-        """Ritorna il percorso più breve tra entrata e uscita tramite passi N/E/S/W."""
+        """Ritorna il percorso più breve come passi N/E/S/W."""
         if self.data.entry == self.data.exit:
             return []
 
@@ -77,6 +78,7 @@ class MazeSolver:
         return path
 
     def _reachable_neighbors(self, current: Coord) -> list[tuple[Coord, str]]:
+        """Ritorna i vicini raggiungibili partendo dalla cella corrente."""
         out = []
         cell_walls = self.data.grid[current.y][current.x]
         for dx, dy, from_bit, _, step in DIRS:

@@ -38,5 +38,5 @@ class MazeData:
     closed_cells: set[Coord] = field(default_factory=set)
 
     def inside(self, x: int, y: int) -> bool:
-        """Check per assicurarsi che le coordinate non siano out of bounds."""
+        """Verifica che le coordinate siano all'interno della matrice."""
         return 0 <= x < self.width and 0 <= y < self.height

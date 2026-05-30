@@ -21,3 +21,6 @@ SEED=5
 
 # Flag for including the 42 block in the maze
 INCLUDE_42=True
+
+# Generation algorithm: backtracker or binary_tree
+ALGORITHM=backtracker
