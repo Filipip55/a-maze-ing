@@ -33,6 +33,7 @@ class MazeGenerator:
 
     def generate(self) -> None:
         """Avvia generazione del labirinto."""
+        self.generator.rng.seed(self.seed)
         self.data = self.generator.generate()
         self.warnings = self.generator.warnings
 
@@ -40,7 +41,7 @@ class MazeGenerator:
         """Rigenera il labirinto con un nuovo seed opzionale."""
         if new_seed is not None:
             self.seed = new_seed
-            self.generator.rng.seed(new_seed)
+        self.generator.rng.seed(new_seed)
         self.generate()
 
     def shortest_path(self) -> list[str]:
