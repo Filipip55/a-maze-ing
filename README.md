@@ -51,6 +51,7 @@ Mandatory keys:
 Optional keys:
 - `SEED` (int): deterministic random seed
 - `INCLUDE_42` (bool): enable/disable visible `42` closed pattern
+- `ALGORITHM` (`backtracker` or `binary_tree`): generation algorithm
 
 Example:
 ```txt
@@ -62,6 +63,7 @@ OUTPUT_FILE=maze.txt
 PERFECT=True
 SEED=42
 INCLUDE_42=True
+ALGORITHM=backtracker
 ```
 
 ## Maze generation algorithm
@@ -97,10 +99,12 @@ You can pass custom `seed`, `perfect`, and `include_42` values.
 ## Visual representation
 Terminal rendering is provided from the main script.
 Interactive commands:
-- regenerate maze
+- start generation animation
+- regenerate maze with animation
 - show/hide the shortest path to exit
-- rotate wall colors
-- easter eggs! try our 42intra names
+- change generation seed
+- switch generation algorithm
+- set wall colors through RGB values
 
 ## Team and project management
 ### Roles

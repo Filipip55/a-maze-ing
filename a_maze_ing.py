@@ -1,14 +1,17 @@
 """Script principale del progetto."""
 
 import sys
+import time
 from dataclasses import dataclass
 
 from mazegen import Coord, MazeGenerator
+from mazegen.generator import CoreGenerator
 
 
 @dataclass
 class MazeConfig:
     """Dati estratti dal file di configurazione."""
+
     width: int
     height: int
     entry: Coord
@@ -17,20 +20,27 @@ class MazeConfig:
     perfect: bool
     seed: int | None = None
     include_42: bool = True
+    algorithm: str = "backtracker"
 
 
 class ConfigParser:
-    """Gestisce la lettura, la validazione e l'estrazione dei dati del file di configurazione."""
+    """Gestisce lettura, validazione e parsing del file di configurazione."""
 
     REQUIRED_KEYS = {
-        "WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"
+        "WIDTH",
+        "HEIGHT",
+        "ENTRY",
+        "EXIT",
+        "OUTPUT_FILE",
+        "PERFECT",
     }
 
     def __init__(self, path: str) -> None:
+        """Salva il percorso del file di configurazione."""
         self.path = path
 
     def parse(self) -> MazeConfig:
-        """Interpreta i dati del file di configurazione e ritorna un oggetto mazeconfig."""
+        """Interpreta il file di configurazione e restituisce MazeConfig."""
         raw = self._read_file()
         self._validate_keys(raw)
 
@@ -48,9 +58,13 @@ class ConfigParser:
             perfect=self._parse_bool(raw["PERFECT"]),
             seed=int(raw["SEED"]) if "SEED" in raw else None,
             include_42=self._parse_bool(raw.get("INCLUDE_42", "True")),
+            algorithm=self._parse_algorithm(
+                raw.get("ALGORITHM", "backtracker")
+            ),
         )
 
     def _read_file(self) -> dict[str, str]:
+        """Legge il file e restituisce una mappa KEY=VALUE."""
         raw: dict[str, str] = {}
         with open(self.path, "r", encoding="utf-8") as cfg:
             for line_num, line in enumerate(cfg, start=1):
@@ -64,11 +78,13 @@ class ConfigParser:
         return raw
 
     def _validate_keys(self, raw: dict[str, str]) -> None:
+        """Valida che tutte le chiavi obbligatorie siano presenti."""
         missing = self.REQUIRED_KEYS - raw.keys()
         if missing:
             raise ValueError(f"Missing keys: {', '.join(sorted(missing))}")
 
     def _parse_bool(self, value: str) -> bool:
+        """Converte una stringa in valore booleano."""
         lower = value.strip().lower()
         if lower in {"true", "1", "yes", "y", "on"}:
             return True
@@ -77,6 +93,7 @@ class ConfigParser:
         raise ValueError(f"Invalid boolean value: {value!r}")
 
     def _parse_coord(self, value: str, key: str) -> Coord:
+        """Converte una coordinata x,y in oggetto Coord."""
         parts = [item.strip() for item in value.split(",")]
         if len(parts) != 2:
             raise ValueError(f"{key} must have format x,y")
@@ -86,60 +103,170 @@ class ConfigParser:
             raise ValueError(f"{key} must be integers") from exc
         return Coord(x, y)
 
+    def _parse_algorithm(self, value: str) -> str:
+        """Valida il nome dell'algoritmo di generazione."""
+        algorithm = value.strip().lower()
+        if algorithm not in CoreGenerator.SUPPORTED_ALGORITHMS:
+            allowed = ", ".join(sorted(CoreGenerator.SUPPORTED_ALGORITHMS))
+            raise ValueError(
+                f"ALGORITHM must be one of: {allowed}"
+            )
+        return algorithm
+
 
 class MazeCLI:
-    """Interfaccia CLI per comandi sul labirinto."""
+    """Interfaccia CLI con menu e animazioni di generazione."""
 
-    WALL_COLORS = [
-        "",
-        "\033[31m",  # Red
-        "\033[32m",  # Green
-        "\033[34m",  # Blue
-        "\033[36m",  # Cyan
-        "\033[33m",  # Yellow
-    ]
+    INPUT_ERROR_DELAY = 0.8
+    WARNING_DELAY = 1.2
+    UNKNOWN_COMMAND_DELAY = 0.6
+    FRAME_DELAY = 0.04
 
-    def __init__(self, generator: MazeGenerator) -> None:
+    def __init__(self, generator: MazeGenerator, output_file: str) -> None:
+        """Inizializza lo stato della CLI."""
         self.generator = generator
+        self.output_file = output_file
         self.show_solution = False
-        self.color_idx = 0
+        self.wall_color = ""
+        self.started = False
 
     def run(self) -> None:
-        """Avvio del loop principale."""
+        """Avvia il loop principale dei comandi utente."""
         while True:
-            color = self.WALL_COLORS[self.color_idx]
-            print(f"\n"
-                  f"{self.generator.render_ascii(self.show_solution, color)}")
-            print("\nCommands: "
-                  "[r]regenerate, [s]show/hide path, [c]color, [q]quit")
+            self._print_screen()
             try:
                 cmd = input("> ").strip().lower()
-                # Easter eggs marameo
-                if cmd in {"elimon", "eli", "edingwiz"}:
-                    print("Ping Pong? 🏓")
-                    break
-                elif cmd in {"filip", "ioan", "fil", "icoman"}:
-                    print("Che ci fai a scuola?")
-                    break
-                elif cmd in {"q", "quit", "exit"}:
+                if cmd in {"q", "quit", "exit"}:
                     break
                 self._handle_command(cmd)
             except (EOFError, KeyboardInterrupt):
                 print("\nExiting.")
                 break
 
+    def _print_screen(self) -> None:
+        """Stampa schermata corrente con menu comandi."""
+        print("\033[H\033[J", end="")
+        if self.started:
+            maze = self.generator.render_ascii(
+                self.show_solution,
+                self.wall_color,
+            )
+            print(f"{maze}\n")
+        else:
+            print("=== A-Maze-ing ===")
+            print("Premi [1] Start per avviare l'animazione iniziale.\n")
+
+        print(
+            "Menu: [1]start [2]regenerate [3]toggle path "
+            "[4]seed [5]algorithm [6]rgb color [q]quit"
+        )
+        print(
+            f"Seed={self.generator.seed} "
+            f"Algorithm={self.generator.algorithm} "
+            f"Path={'ON' if self.show_solution else 'OFF'}"
+        )
+
     def _handle_command(self, cmd: str) -> None:
-        if cmd in {"s", "show"}:
+        """Instrada il comando al relativo handler."""
+        if cmd in {"1", "start"}:
+            self.started = True
+            self._animate_generation()
+            return
+        if cmd in {"2", "r", "regen", "regenerate"}:
+            self._regenerate()
+            return
+        if cmd in {"3", "s", "show"}:
             self.show_solution = not self.show_solution
-        elif cmd in {"c", "color", "colour"}:
-            self.color_idx = (self.color_idx + 1) % len(self.WALL_COLORS)
-        elif cmd in {"r", "regen", "regenerate"}:
-            try:
-                self.generator.regenerate()
-                for warning in self.generator.warnings:
-                    print(f"Warning: {warning}")
-            except ValueError as exc:
-                print(f"Error during regeneration: {exc}")
+            return
+        if cmd in {"4", "seed"}:
+            self._change_seed()
+            return
+        if cmd in {"5", "algo", "algorithm"}:
+            self._change_algorithm()
+            return
+        if cmd in {"6", "color", "colour"}:
+            self._change_color()
+            return
+        print("Unknown command.")
+        time.sleep(self.UNKNOWN_COMMAND_DELAY)
+
+    def _regenerate(self) -> None:
+        """Rigenera il labirinto corrente e aggiorna l'output file."""
+        try:
+            self.generator.generate()
+            self.generator.dump_to_file(self.output_file)
+            self.started = True
+            self._animate_generation()
+            for warning in self.generator.warnings:
+                print(f"Warning: {warning}")
+                time.sleep(self.WARNING_DELAY)
+        except ValueError as exc:
+            print(f"Error during regeneration: {exc}")
+            time.sleep(self.WARNING_DELAY)
+
+    def _change_seed(self) -> None:
+        """Permette all'utente di scegliere un nuovo seed intero."""
+        value = input("New seed (integer): ").strip()
+        try:
+            seed = int(value)
+        except ValueError:
+            print("Invalid seed.")
+            time.sleep(self.INPUT_ERROR_DELAY)
+            return
+        self.generator.set_seed(seed)
+        self._regenerate()
+
+    def _change_algorithm(self) -> None:
+        """Permette all'utente di cambiare algoritmo di generazione."""
+        options = sorted(CoreGenerator.SUPPORTED_ALGORITHMS)
+        print(f"Available algorithms: {', '.join(options)}")
+        choice = input("Algorithm: ").strip().lower()
+        try:
+            self.generator.set_algorithm(choice)
+        except ValueError as exc:
+            print(exc)
+            time.sleep(self.INPUT_ERROR_DELAY)
+            return
+        self._regenerate()
+
+    def _change_color(self) -> None:
+        """Imposta il colore muri con codici RGB o resetta al default."""
+        value = input("RGB (es. 120,40,240) oppure empty per default: ")
+        value = value.strip()
+        if not value:
+            self.wall_color = ""
+            return
+        parts = [part.strip() for part in value.split(",")]
+        if len(parts) != 3:
+            print("RGB format must be r,g,b.")
+            time.sleep(self.INPUT_ERROR_DELAY)
+            return
+        try:
+            r, g, b = (int(part) for part in parts)
+        except ValueError:
+            print("RGB values must be integers.")
+            time.sleep(self.INPUT_ERROR_DELAY)
+            return
+        invalid = [
+            channel for channel in (r, g, b) if channel < 0 or channel > 255
+        ]
+        if invalid:
+            bad_values = ", ".join(str(channel) for channel in invalid)
+            print(f"RGB values out of range [0,255]: {bad_values}.")
+            time.sleep(self.INPUT_ERROR_DELAY)
+            return
+        self.wall_color = f"\033[38;2;{r};{g};{b}m"
+
+    def _animate_generation(self) -> None:
+        """Riproduce l'animazione della generazione del labirinto."""
+        frames = self.generator.generation_frames(
+            self.show_solution,
+            self.wall_color,
+        )
+        for frame in frames:
+            print("\033[H\033[J", end="")
+            print(frame)
+            time.sleep(self.FRAME_DELAY)
 
 
 def main(argv: list[str]) -> int:
@@ -158,6 +285,7 @@ def main(argv: list[str]) -> int:
             seed=config.seed,
             perfect=config.perfect,
             include_42=config.include_42,
+            algorithm=config.algorithm,
         )
         generator.generate()
         generator.dump_to_file(config.output_file)
@@ -166,7 +294,7 @@ def main(argv: list[str]) -> int:
         for warning in generator.warnings:
             print(f"Warning: {warning}")
 
-        MazeCLI(generator).run()
+        MazeCLI(generator, config.output_file).run()
         return 0
     except Exception as exc:
         print(f"Error: {exc}")
