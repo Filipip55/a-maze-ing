@@ -34,11 +34,11 @@ class CoreGenerator:
             "#....#.",
             "###..#.",
         ],
-        21: [
-            "###.##.",
-            "..#..#.",
-            "###..#.",
-            "#....#.",
+        20: [
+            "###.###",
+            "..#.#.#",
+            "###.#.#",
+            "#...#.#",
             "###.###",
         ],
     }
@@ -46,15 +46,15 @@ class CoreGenerator:
     SUPPORTED_ALGORITHMS = {"backtracker", "binary_tree"}
 
     def __init__(
-        self,
-        width: int,
-        height: int,
-        entry: Coord,
-        exit_: Coord,
-        seed: int | None,
-        perfect: bool,
-        include_42: bool,
-        algorithm: str,
+            self,
+            width: int,
+            height: int,
+            entry: Coord,
+            exit_: Coord,
+            seed: int | None,
+            perfect: bool,
+            include_42: bool,
+            algorithm: str,
     ) -> None:
         """Inizializza il generatore con parametri e stato condiviso."""
         if algorithm not in self.SUPPORTED_ALGORITHMS:
@@ -182,9 +182,9 @@ class CoreGenerator:
                 nx, ny = current.x + dx, current.y + dy
                 nxt = Coord(nx, ny)
                 if (
-                    not self.data.inside(nx, ny)
-                    or nxt in blocked
-                    or nxt in seen
+                        not self.data.inside(nx, ny)
+                        or nxt in blocked
+                        or nxt in seen
                 ):
                     continue
                 seen.add(nxt)
@@ -192,7 +192,7 @@ class CoreGenerator:
         return len(seen) == len(open_cells)
 
     def _unvisited_neighbors(
-        self, current: Coord, visited: set[Coord]
+            self, current: Coord, visited: set[Coord]
     ) -> list[tuple[int, int, int, int]]:
         """Trova i vicini non visitati senza creare aree aperte 3x3."""
         candidates = []
@@ -222,8 +222,8 @@ class CoreGenerator:
                 nx, ny = x + dx, y + dy
                 nxt = Coord(nx, ny)
                 if (
-                    not self.data.inside(nx, ny)
-                    or nxt in self.data.closed_cells
+                        not self.data.inside(nx, ny)
+                        or nxt in self.data.closed_cells
                 ):
                     continue
                 if self.data.grid[y][x] & from_bit:
@@ -255,7 +255,7 @@ class CoreGenerator:
         return visited
 
     def _generate_with_binary_tree(
-        self, open_cells: list[Coord]
+            self, open_cells: list[Coord]
     ) -> set[Coord]:
         """Genera il labirinto con algoritmo binary-tree."""
         visited: set[Coord] = set(open_cells)
@@ -281,7 +281,7 @@ class CoreGenerator:
         return visited
 
     def _open_between(
-        self, current: Coord, nxt: Coord, from_bit: int, to_bit: int
+            self, current: Coord, nxt: Coord, from_bit: int, to_bit: int
     ) -> None:
         """Apre il passaggio tra due celle adiacenti."""
         self.data.grid[current.y][current.x] &= ~from_bit
@@ -289,7 +289,7 @@ class CoreGenerator:
         self.last_open_steps.append((current, nxt))
 
     def _can_open_between(
-        self, current: Coord, nxt: Coord, from_bit: int, to_bit: int
+            self, current: Coord, nxt: Coord, from_bit: int, to_bit: int
     ) -> bool:
         """Valuta se aprire un muro viola il vincolo delle aree 3x3."""
         if not (self.data.grid[current.y][current.x] & from_bit):
@@ -303,7 +303,7 @@ class CoreGenerator:
         return not forbidden
 
     def _contains_forbidden_3x3_near(
-        self, first: Coord, second: Coord
+            self, first: Coord, second: Coord
     ) -> bool:
         """Controlla blocchi 3x3 vicini alle due celle appena modificate."""
         min_x = min(first.x, second.x) - 2
@@ -392,7 +392,7 @@ class CoreGenerator:
                 return False
 
     def _connected_components(
-        self, open_cells: list[Coord]
+            self, open_cells: list[Coord]
     ) -> list[set[Coord]]:
         """Ritorna le componenti connesse usando i muri correnti."""
         all_open = set(open_cells)
